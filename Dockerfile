@@ -13,7 +13,7 @@ WORKDIR ${TOOLS_PATH}
 ARG GLIBC_VERSION=2.35-r1
 ARG GLIBC_APK_NAME=glibc-${GLIBC_VERSION}.apk 
 ARG GLIBC_APK_DOWNLOAD_URL=https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/${GLIBC_APK_NAME}
-RUN apk --no-cache add ca-certificates wget make cmake stlink \
+RUN apk --no-cache add ca-certificates wget curl make cmake stlink \
 	&& wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
 	&& wget ${GLIBC_APK_DOWNLOAD_URL} \
 	&& apk add ${GLIBC_APK_NAME} \
