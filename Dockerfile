@@ -10,7 +10,7 @@ RUN mkdir ${TOOLS_PATH}
 WORKDIR ${TOOLS_PATH}
 
 # Install basic programs
-RUN apt-get update && apt-get install -y  wget curl make cmake
+RUN apt-get update && apt-get install -y  wget curl make cmake xz-utils
 
 # Install Arm GNU Toolchain
 # https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
