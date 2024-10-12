@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y  wget curl make cmake
 # https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 RUN mkdir ${ARM_TOOLCHAIN_PATH}
 RUN curl -L -o gcc-arm.tar.xz "https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_VERSION}/binrel/arm-gnu-toolchain-${ARM_VERSION}-${ARM_ARCH}-arm-none-eabi.tar.xz"
-RUN tar xf gcc-arm.tar.xz --strip-components=1 -C ${ARM_TOOLCHAIN_PATH}
+RUN tar -xvf gcc-arm.tar.xz --strip-components=1 -C ${ARM_TOOLCHAIN_PATH}
 RUN rm gcc-arm.tar.xz
 
 ENV PATH="${TOOLS_PATH}/${ARM_TOOLCHAIN_PATH}/bin:${PATH}"
