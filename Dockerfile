@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM debian:11.11-slim
 
 MAINTAINER chishin <pro@xxgzs.org>
 
@@ -9,15 +9,8 @@ ARG TOOLS_PATH=/tools
 RUN mkdir ${TOOLS_PATH}
 WORKDIR ${TOOLS_PATH}
 
-# Install basic programs and custom glibc
-ARG GLIBC_VERSION=2.35-r1
-ARG GLIBC_APK_NAME=glibc-${GLIBC_VERSION}.apk 
-ARG GLIBC_APK_DOWNLOAD_URL=https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/${GLIBC_APK_NAME}
-RUN apk --no-cache add ca-certificates wget curl make cmake stlink \
-	&& wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-	&& wget ${GLIBC_APK_DOWNLOAD_URL} \
-	&& apk add ${GLIBC_APK_NAME} \
-	&& rm ${GLIBC_APK_NAME}
+# Install basic programs
+RUN apt-get update && apt-get install -y  wget curl make cmake
 
 # Install Arm GNU Toolchain
 # https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
@@ -26,7 +19,9 @@ RUN curl -L -o gcc-arm.tar.xz "https://developer.arm.com/-/media/Files/downloads
 RUN tar xf gcc-arm.tar.xz --strip-components=1 -C ${ARM_TOOLCHAIN_PATH}
 RUN rm gcc-arm.tar.xz
 
-ENV PATH="${ARM_TOOLCHAIN_PATH}/bin:${PATH}"
+ENV PATH="${TOOLS_PATH}/${ARM_TOOLCHAIN_PATH}/bin:${PATH}"
 
 # Change workdir
-WORKDIR /build
+WORKDIR /code
+
+CMD make -v && arm-none-eabi-gcc -v
