@@ -8,15 +8,13 @@ ARG ARM_ARCH
 ARG TOOLS_PATH=/tools
 
 # Configure the target platform env: ARM_ARCH
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-    echo "Setting environment for x86_64"; \
-    export ARM_ARCH=x86_64; \
-  elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+RUN echo "Target Platform: $TARGETPLATFORM";
+RUN if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
     echo "Setting environment for aarch64"; \
     export ARM_ARCH=aarch64; \
   else \
-    echo "Unsupported platform: $BUILDPLATFORM"; \
-    exit 1; \
+    echo "Unsupported platform: $TARGETPLATFORM"; \
+    export ARM_ARCH=x86_64; \
   fi
 
 # Install basic programs
