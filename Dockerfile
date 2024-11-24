@@ -7,21 +7,8 @@ ARG ARM_TOOLCHAIN_PATH=gcc-arm-none-eabi
 ARG ARM_VERSION=13.3.rel1
 ARG TOOLS_PATH=/tools
 
-# Configure the target platform env: ARM_ARCH
-SHELL ["/bin/sh", "-c"]
-RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
-        echo "ARM_ARCH is set to aarch64"; \
-        export ARM_ARCH=aarch64; \
-    elif [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
-        echo "ARM_ARCH is set to x86_64"; \
-        export ARM_ARCH=x86_64; \
-    else \
-        echo "Unsupported TARGETPLATFORM"; \
-        exit 1; \
-    fi
-
 # Install basic programs
-RUN echo "ARM_ARCH = $ARM_ARCH" && echo "TARGETPLATFORM = $TARGETPLATFORM" && \
+RUN echo "TARGETPLATFORM = $TARGETPLATFORM" && \
     apt-get update && \
     apt-get install -y  wget curl make cmake xz-utils && \
     mkdir ${TOOLS_PATH}
@@ -32,7 +19,16 @@ WORKDIR ${TOOLS_PATH}
 # Install Arm GNU Toolchain
 # https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 RUN mkdir ${ARM_TOOLCHAIN_PATH} && \
-    curl -L -o gcc-arm.tar.xz "https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_VERSION}/binrel/arm-gnu-toolchain-${ARM_VERSION}-${ARM_ARCH}-arm-none-eabi.tar.xz" && \
+    if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+        echo "Using ARM_ARCH: aarch64"; \
+        curl -L -o gcc-arm.tar.xz "https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_VERSION}/binrel/arm-gnu-toolchain-${ARM_VERSION}-aarch64-arm-none-eabi.tar.xz"; \
+    elif [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+        echo "Using ARM_ARCH: x86_64"; \
+        curl -L -o gcc-arm.tar.xz "https://developer.arm.com/-/media/Files/downloads/gnu/${ARM_VERSION}/binrel/arm-gnu-toolchain-${ARM_VERSION}-x86_64-arm-none-eabi.tar.xz"; \
+    else \
+        echo "Unsupported TARGETPLATFORM"; \
+        exit 1; \
+    fi && \
     tar -xvf gcc-arm.tar.xz --strip-components=1 -C ${ARM_TOOLCHAIN_PATH} && \
     rm gcc-arm.tar.xz
 
