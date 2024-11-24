@@ -28,6 +28,9 @@ jobs:
       packages: write
       id-token: write # needed for signing the images with GitHub OIDC
     name: build-image
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -73,3 +76,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          platforms: ${{ matrix.platform }}
+          build-args: |
+            TARGETPLATFORM=${{ matrix.platform }}
