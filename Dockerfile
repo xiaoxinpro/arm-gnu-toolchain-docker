@@ -8,10 +8,13 @@ ARG ARM_VERSION=13.3.rel1
 ARG TOOLS_PATH=/tools
 
 # Configure the target platform env: ARM_ARCH
+SHELL ["/bin/sh", "-c"]
 RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ]; then \
-        echo "ARM_ARCH=aarch64" >> /etc/environment; \
+        echo "ARM_ARCH is set to aarch64"; \
+        export ARM_ARCH=aarch64; \
     elif [ "${TARGETPLATFORM}" = "linux/amd64" ]; then \
-        echo "ARM_ARCH=x86_64" >> /etc/environment; \
+        echo "ARM_ARCH is set to x86_64"; \
+        export ARM_ARCH=x86_64; \
     else \
         echo "Unsupported TARGETPLATFORM"; \
         exit 1; \
