@@ -1,6 +1,6 @@
 FROM debian:11.11-slim
 
-MAINTAINER chishin <pro@xxgzs.org>
+LABEL org.opencontainers.image.authors="pro@xxgzs.org"
 
 ARG TARGETPLATFORM
 ARG ARM_TOOLCHAIN_PATH=gcc-arm-none-eabi
