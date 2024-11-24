@@ -1,8 +1,7 @@
-FROM --platform=$TARGETPLATFORM debian:11.11-slim
+FROM debian:11.11-slim
 
 MAINTAINER chishin <pro@xxgzs.org>
 
-ARG TARGETPLATFORM
 ARG ARM_TOOLCHAIN_PATH=gcc-arm-none-eabi
 ARG ARM_VERSION=13.3.rel1
 ARG TOOLS_PATH=/tools
