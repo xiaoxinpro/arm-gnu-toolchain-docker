@@ -28,9 +28,6 @@ jobs:
       packages: write
       id-token: write # needed for signing the images with GitHub OIDC
     name: build-image
-    strategy:
-      matrix:
-        platform: [linux/amd64, linux/arm64]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -79,40 +76,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           build-args: |
-            TARGETPLATFORM=${{ matrix.platform }}
-
-  create-manifest:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to Container Registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Login to Docker Hub ${{ env.DOCKERHUB_IMAGE_NAME }}
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Create and push Docker manifest
-        if: github.event_name != 'pull_request'
-        run: |
-          docker manifest create ${{ env.DOCKERHUB_IMAGE_NAME }}:latest \
-            --amend ${{ env.DOCKERHUB_IMAGE_NAME }}:latest-linux-amd64 \
-            --amend ${{ env.DOCKERHUB_IMAGE_NAME }}:latest-linux-arm64
-          docker manifest push ${{ env.DOCKERHUB_IMAGE_NAME }}:latest
-
-      - name: Create and push Docker manifest for GHCR
-        if: github.event_name != 'pull_request'
-        run: |
-          docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-            --amend ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-linux-amd64 \
-            --amend ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-linux-arm64
-          docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            TARGETPLATFORM=linux/amd64,linux/arm64
