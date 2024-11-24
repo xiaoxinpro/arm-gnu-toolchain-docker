@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM debian:11.11-slim
+FROM --platform=$TARGETPLATFORM debian:11.11-slim
 
 MAINTAINER chishin <pro@xxgzs.org>
 
@@ -8,10 +8,10 @@ ARG ARM_ARCH
 ARG TOOLS_PATH=/tools
 
 # Configure the target platform env: ARM_ARCH
-RUN if [ "$BUILDPLATFORM" = "linux/amd64" ]; then \
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
     echo "Setting environment for x86_64"; \
     export ARM_ARCH=x86_64; \
-  elif [ "$BUILDPLATFORM" = "linux/arm64" ]; then \
+  elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
     echo "Setting environment for aarch64"; \
     export ARM_ARCH=aarch64; \
   else \
